@@ -1,0 +1,58 @@
+{
+	"conf_path":"conf/conf.json",
+	"log_path":"all.log",
+	"youtube":{
+		"data_path":"data/continental_youtube.csv",
+		"search_url":"https://www.googleapis.com/youtube/v3/search?part=snippet",
+		"key":"AIzaSyCC5ieM4Sm1wH2by58N0ojfr91E4umcTPI",
+		"search":{
+			"maxVideos":100,
+			"base_url":"https://www.googleapis.com/youtube/v3/search?part=snippet",
+			"terms":"bentley continental gt",
+			"params":{
+				"maxResults":50,
+				"fields":"nextPageToken,items/id/videoId"
+			}
+		},
+		"top_level_comment":{
+			"base_url":"https://www.googleapis.com/youtube/v3/commentThreads?part=snippet",
+			"params":{
+				"maxResults":100,
+				"fields":"nextPageToken,pageInfo,items/snippet(totalReplyCount,topLevelComment(id,snippet(authorDisplayName,textDisplay,publishedAt)))"
+			}
+		},
+		"comment_replies":{
+			"base_url":"https://www.googleapis.com/youtube/v3/comments?part=snippet",
+			"params":{
+				"maxResults":100,
+				"fields":"nextPageToken,pageInfo,items(id,snippet(authorDisplayName,textDisplay,parentId,updatedAt))"
+			}
+		}
+
+	},
+	"facebook":{
+		"data_path":"facebook_iPhoneX.csv",
+		"url_root" : "https://graph.facebook.com/v2.10",
+		"access_token":"EAACEdEose0cBALohXpqf3ZCZBtTkmKZAXZBxU3oZAGNalI8YsRVbF8Mo3dcL1ik5gTjxDvON0JcjxBmcR99k4UG2hMqqBBT3D2ZB0ieLymZC3bmqHYYfJ3S1ueuP1otkH96YCUUX2HQKBRFVzBwgXm5ZAH5RicoapbOt29gRUbGtadTAgA7d6hXWCfUNiIyFZAc0ZD",
+		"pages1":["verge", "mashable.tech" , "PhoneArena" , "MKBHD", "DroidLife", "AndroidCentral" , "androidauthority" , "pocketnow" , "TechnoBuffalo" , "phandroid" , "theMrMobile" , "Engadget", "TechRadar" , "gizmodo", "circuitbreaker"],
+		"page_list_file" : "pages.txt",
+		"terms":"iphonex",
+		"data":{
+			"page":{
+				"edge": "posts",
+				"params":{
+					"fields": ["message","id","name","created_time"],
+					"limit" : "100"	
+				}
+				
+			},
+			"post":{
+				"edge":"comments",
+				"params":{
+					"fields" : ["message","id","created_time","name","from"],
+					"limit" : "100"	
+				}
+			}
+		}
+	}
+}
