@@ -16,7 +16,7 @@ class PageFeedReader:
     def __init__(self, conf_path):
         all_conf = json.load(open(conf_path))
         self.conf = all_conf['facebook']
-        self.data_path = self.conf['data_path']
+        self.data_path = str((datetime.datetime.now()).strftime('%H_%M_%S.%f')) + "_" + str(self.conf['data_path'])
         self.logger = log.Logger(all_conf['log_path'])
         self.total_comment_count = 0
         self.pages = self.get_page_list(self.conf['page_list_file'])
@@ -59,8 +59,6 @@ class PageFeedReader:
             self.logger.error("There was an error while trying to fetch " + typ + ". Please check the input parameters, the key might be wrong" +str(e))
             return []
             # exit(1)
-
-        
         count = 0
         while data.has_key('paging') and data['paging'].has_key('next'):
             next_url = data['paging']['next']
@@ -81,7 +79,6 @@ class PageFeedReader:
         filtered_data = []
         filename = "postmsgs.txt"
         f = open(filename,'w')
-
         try:
             for item in data:
                 in_name, in_message = False, False

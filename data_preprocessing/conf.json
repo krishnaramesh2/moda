@@ -33,10 +33,10 @@
 	"facebook":{
 		"data_path":"facebook_iPhoneX.csv",
 		"url_root" : "https://graph.facebook.com/v2.10",
-		"access_token":"EAACEdEose0cBALohXpqf3ZCZBtTkmKZAXZBxU3oZAGNalI8YsRVbF8Mo3dcL1ik5gTjxDvON0JcjxBmcR99k4UG2hMqqBBT3D2ZB0ieLymZC3bmqHYYfJ3S1ueuP1otkH96YCUUX2HQKBRFVzBwgXm5ZAH5RicoapbOt29gRUbGtadTAgA7d6hXWCfUNiIyFZAc0ZD",
+		"access_token":"EAACEdEose0cBAPkxtZAFmRmckqFzpDiKAIBMsGqXHM46gxefm74e7urAqrIIDOcyn623SKnNIJOjBd9nqqCubZCQfkUJFRTRFVGp477gIH6i78LEZCDBFeKlS6OWLaMsGmFJSx60ZAI5f4JXiFYA6JCKCZBd4WPbPQqKk17OlzrPLvfEEIzERXLlGD8joGf0ZD",
 		"pages1":["verge", "mashable.tech" , "PhoneArena" , "MKBHD", "DroidLife", "AndroidCentral" , "androidauthority" , "pocketnow" , "TechnoBuffalo" , "phandroid" , "theMrMobile" , "Engadget", "TechRadar" , "gizmodo", "circuitbreaker"],
 		"page_list_file" : "pages.txt",
-		"terms":"iphonex",
+		"terms":"iphone",
 		"data":{
 			"page":{
 				"edge": "posts",
