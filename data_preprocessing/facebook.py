@@ -13,10 +13,11 @@ def filter_printable(s):
     return filter(lambda x: x in printable, s)
 
 class PageFeedReader:
-    def __init__(self, conf_path):
+    def __init__(self, conf_path, data_path, terms):
         all_conf = json.load(open(conf_path))
         self.conf = all_conf['facebook']
-        self.data_path = str((datetime.datetime.now()).strftime('%H_%M_%S.%f')) + "_" + str(self.conf['data_path'])
+        self.data_path = str((datetime.datetime.now()).strftime('%H_%M_%S.%f')) + "_" + str(data_path)
+        self.terms = terms
         self.logger = log.Logger(all_conf['log_path'])
         self.total_comment_count = 0
         self.pages = self.get_page_list(self.conf['page_list_file'])
@@ -86,13 +87,13 @@ class PageFeedReader:
                 if item.has_key('message'):
                     if item.has_key("created_time"):
                         f.write(filter_printable(item["message"].lower() + "\n" + item["created_time"]))
-                    if all((word in item['message'].lower()) for word in self.conf['terms'].split()):
+                    if all((word in item['message'].lower()) for word in self.terms.split()):
                         in_message = True
                 # if the terms are present in the heading of an article link in the post's body
                 if item.has_key('name'):
                     if item.has_key("created_time"):
                         f.write(filter_printable(item["name"].lower() + "\n" + item["created_time"]))
-                    if all((word in item['name'].lower()) for word in self.conf['terms'].split()):
+                    if all((word in item['name'].lower()) for word in self.terms.split()):
                         in_name = True
                 if in_name or in_message:
                         filtered_data.append(item)
