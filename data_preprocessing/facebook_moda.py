@@ -16,6 +16,7 @@ class PageFeedReader:
         all_conf = json.load(open(conf_path))
         self.conf = all_conf['facebook']
         self.data_path = str((datetime.datetime.now()).strftime('%H_%M_%S.%f')) + "_" + str(self.conf['data_path'])
+        # self.terms = terms
         self.logger = log.Logger(all_conf['log_path'])
         self.total_comment_count = 0
         self.pages = self.get_page_list(self.conf['page_list_file'])
@@ -85,13 +86,13 @@ class PageFeedReader:
                 if item.has_key('message'):
                     if item.has_key("created_time"):
                         f.write(filter_printable(item["message"].lower() + "\n" + item["created_time"]))
-                    if all((word in item['message'].lower()) for word in self.conf['terms'].split()):
+                    if all((word in item['message'].lower()) for word in self.terms.split()):
                         in_message = True
                 # if the terms are present in the heading of an article link in the post's body
                 if item.has_key('name'):
                     if item.has_key("created_time"):
                         f.write(filter_printable(item["name"].lower() + "\n" + item["created_time"]))
-                    if all((word in item['name'].lower()) for word in self.conf['terms'].split()):
+                    if all((word in item['name'].lower()) for word in self.terms.split()):
                         in_name = True
                 if in_name or in_message:
                         filtered_data.append(item)
@@ -103,22 +104,27 @@ class PageFeedReader:
         return filtered_data
 
     # wrapper to fetch and filter the posts and then invoke method to fetch all comments from those posts
-    def fetch_write(self):
+    def fetch(self):
         filtered_posts = self.filter_data(self.fetch_all_posts())
         print "Relevant posts: " + str(len(filtered_posts))
         self.logger.info("Relevant posts: " + str(len(filtered_posts)))
         comment_count = 0
-        
+        all_comments = []
         for post in filtered_posts:
             if post.has_key('id'):
                 cms = self.fetch_all_comments(post['id'])
                 comment_count += len(cms)
-                self.write_out(cms,post['id'])
+                for item in cms:
+                    comment = {}
+                    comment['id'] = item['id']
+                    comment['comment'] = item['message']
+                    all_comments.append(comment)
+                # self.write_out(cms,post['id'])
         
         print "Fetched " + str(comment_count) + " comments from all the relevant posts of this page"
         self.logger.info("Fetched " + str(comment_count) + " comments from all the relevant posts of this page")
         self.total_comment_count += comment_count
-        
+        return all_comments
     # extracts fields from the posts and write to csv file
     # if it is decided to fetch more fields from facebook than what it is now, then code in this method
     # needs to be modified
@@ -143,27 +149,27 @@ class PageFeedReader:
             exit(1)
 
 
-    def fetch_everything(self):
+    def fetch_everything(self, terms):
         if os.path.exists(self.data_path):
             self.comment_ids = [line.split(',')[4].strip() for line in open(self.data_path,'rb').readlines()]
         else:
             self.comment_ids = []
 
-        # self.terms = terms
+        self.terms = terms
         print "Beginning FB scan"
         self.logger.info("Beginning FB scan")
         # print self.pages
-        all_comments = {}
+        all_comments = []
         for page in self.pages:
             self.page = page.strip()
             print "Scanning FB page: " + page
             self.logger.info("Scanning FB page: " + page)
             # self.base_url = self.construct_url({'node_type':'page'})
-            self.fetch_write()
+            all_comments.extend(self.fetch())
 
-        print "Written " + str(self.total_comment_count) + "comments to " + self.data_path
-        self.logger.info("Written " + str(self.total_comment_count) + "comments to " + self.data_path)
-        
+        # print "Written " + str(self.total_comment_count) + "comments to " + self.data_path
+        # self.logger.info("Written " + str(self.total_comment_count) + "comments to " + self.data_path)
+        return all_comments
 
 if __name__ == '__main__':
     pf = PageFeedReader('conf.json')

@@ -32,8 +32,8 @@
 	},
 	"facebook":{
 		"data_path":"facebook_iPhoneX.csv",
-		"url_root" : "https://graph.facebook.com/v2.10",
-		"access_token":"EAACEdEose0cBAPkxtZAFmRmckqFzpDiKAIBMsGqXHM46gxefm74e7urAqrIIDOcyn623SKnNIJOjBd9nqqCubZCQfkUJFRTRFVGp477gIH6i78LEZCDBFeKlS6OWLaMsGmFJSx60ZAI5f4JXiFYA6JCKCZBd4WPbPQqKk17OlzrPLvfEEIzERXLlGD8joGf0ZD",
+		"url_root" : "https://graph.facebook.com/v2.11",
+		"access_token":"EAACEdEose0cBAApsrIgaAKi3mvFZAm3kJi1KOScFtSNleb5pTZC3uZAC2cxHbw6HXRx5golWFKRKHmpbrTz0rqtb42DFrcUVs8CVwwWZBtTF7dJZAsi8VnKtSjYa1z5n1wj7uxZAvfrOiytrMgeZCYMRtFs9GIeEtmZCS3KQIQ5oWD9CvdgEKH9yRH9NoNap52oZD",
 		"pages1":["verge", "mashable.tech" , "PhoneArena" , "MKBHD", "DroidLife", "AndroidCentral" , "androidauthority" , "pocketnow" , "TechnoBuffalo" , "phandroid" , "theMrMobile" , "Engadget", "TechRadar" , "gizmodo", "circuitbreaker"],
 		"page_list_file" : "pages.txt",
 		"terms":"iphone",
