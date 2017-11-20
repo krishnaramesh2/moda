@@ -9,6 +9,6 @@ dd = [ {model:terms[model]} for model in terms.keys()]
 
 rdd = sc.parallelize(dd)
 
-mapped = rdd.map(lambda x: x.keys(0).upper())
+mapped = rdd.map(lambda x: (x.keys())[0].upper())
 
 print mapped
