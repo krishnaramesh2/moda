@@ -1,3 +1,4 @@
+from mongo_connector import *
 import requests
 import json
 import sys
@@ -5,6 +6,8 @@ import os
 import log
 import string
 import datetime
+import pickle
+
 # main class to read data
 # input:- path of config file, path to destination csv file, log directory path
 def filter_printable(s):
@@ -20,6 +23,8 @@ class PageFeedReader:
         self.logger = log.Logger(all_conf['log_path'])
         self.total_comment_count = 0
         self.pages = self.get_page_list(self.conf['page_list_file'])
+        self.mc = MongoConnector('localhost' , 27017)
+        self.db = self.mc.createDatabase("cloud_db")
 
     def get_page_list(self, path):
         print "Considering pages listed in " + path
@@ -104,10 +109,19 @@ class PageFeedReader:
         return filtered_data
 
     # wrapper to fetch and filter the posts and then invoke method to fetch all comments from those posts
-    def fetch(self):
+    def fetch(self, model, model_terms, page):
+        if os.path.exists(self.conf['comment_ids_persisted']):
+            self.comment_ids = pickle.load(open(self.conf['comment_ids_persisted']))
+        else:
+            self.comment_ids = set()
+
+        self.page = page.strip()
+        self.terms = model_terms
         filtered_posts = self.filter_data(self.fetch_all_posts())
+        
         print "Relevant posts: " + str(len(filtered_posts))
         self.logger.info("Relevant posts: " + str(len(filtered_posts)))
+        
         comment_count = 0
         all_comments = []
         for post in filtered_posts:
@@ -118,12 +132,20 @@ class PageFeedReader:
                     comment = {}
                     comment['id'] = item['id']
                     comment['comment'] = item['message']
-                    all_comments.append(comment)
+
+                    #Check where the comment is present in the set
+                    #if no, then add it to the set and also all_comments
+                    #if yes, then skip it altogether
+                    if comment['id'] not in self.comment_ids:
+                        self.comment_ids.add(comment['id'])
+                        all_comments.append(comment)
                 # self.write_out(cms,post['id'])
         
         print "Fetched " + str(comment_count) + " comments from all the relevant posts of this page"
         self.logger.info("Fetched " + str(comment_count) + " comments from all the relevant posts of this page")
         self.total_comment_count += comment_count
+
+        pickle.dump(self.comment_ids, open(self.conf['comment_ids_persisted'],'w'))
         return all_comments
     # extracts fields from the posts and write to csv file
     # if it is decided to fetch more fields from facebook than what it is now, then code in this method
@@ -149,7 +171,7 @@ class PageFeedReader:
             exit(1)
 
 
-    def fetch_everything(self, terms):
+    def fetch_everything(self, model, terms):
         if os.path.exists(self.data_path):
             self.comment_ids = [line.split(',')[4].strip() for line in open(self.data_path,'rb').readlines()]
         else:
@@ -165,11 +187,24 @@ class PageFeedReader:
             print "Scanning FB page: " + page
             self.logger.info("Scanning FB page: " + page)
             # self.base_url = self.construct_url({'node_type':'page'})
-            all_comments.extend(self.fetch())
+            # all_comments.extend(self.fetch())
+            comments = self.fetch()
+            
+            self.write_data(model, comments)
+
 
         # print "Written " + str(self.total_comment_count) + "comments to " + self.data_path
         # self.logger.info("Written " + str(self.total_comment_count) + "comments to " + self.data_path)
         return all_comments
+
+    def write_data(self, model, data):
+
+        collection_name = "facebook_" + model
+        collection = self.mc.createCollection(collection_name)
+
+        print "Inserting " + str(len(data)) + " reviews under the collection : " +  collection_name
+
+        self.mc.insert_many(data, collection)
 
 if __name__ == '__main__':
     pf = PageFeedReader('conf.json')
