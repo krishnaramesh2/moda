@@ -117,6 +117,8 @@ class PageFeedReader:
 
         self.page = page.strip()
         self.terms = model_terms
+        print "\nScanning page:" + self.page
+        print "Term:" + self.terms
         filtered_posts = self.filter_data(self.fetch_all_posts())
         
         print "Relevant posts: " + str(len(filtered_posts))
