@@ -9,6 +9,7 @@ def extract_data():
     """
         main method to extract data
     """
+
     terms_file = '../templates/terms.json'
     pages = [page.strip() for page in (open('pages.txt','r')).readlines()]
     terms_file_f = open(terms_file, 'r')
@@ -29,6 +30,8 @@ def extract_data():
             for page in pages:
                 data = fb_extractor.fetch(model, model_term, page)
                 write_data(model, data)
+                #Close the mongodb connection after data is inserted
+                mc.close()
             """model_data.extend(fb_extractor.fetch_everything(model_term))
             write_data(model, model_data)
             model_data = []"""

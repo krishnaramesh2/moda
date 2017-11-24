@@ -9,23 +9,34 @@ def extract_data(model_dict):
     """
         main method to extract data
     """
+    conf = json.load(open("conf.json" , "r"))
+    mongo_ip = conf["db_ip_home"]
+    db = conf["db_name"]
 
     pages = [page.strip() for page in (open('pages.txt','r')).readlines()]
    
     # extract data from fb
     fb_extractor = facebook_moda.PageFeedReader('conf.json')
+    
     global mc
     global db
-    mc = MongoConnector('localhost' , 27017)
+
+    mc = MongoConnector(mongo_ip , 27017)
     db = mc.createDatabase("cloud_db")
 
     model = (model_dict.keys())[0]
     terms = model_dict[model]
 
+    count = 0
+
     for term in terms:
         for page in pages:
             data = fb_extractor.fetch(model, term, page)
             write_data(model, data)
+            count += len(data)
+            mc.close()
+    
+    return count
 
 def write_data(model, data):
     """
