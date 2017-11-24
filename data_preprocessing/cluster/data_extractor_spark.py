@@ -17,12 +17,12 @@ def extract_data(model_dict):
    
     # extract data from fb
     fb_extractor = facebook_moda.PageFeedReader('conf.json')
-    
+
     global mc
     global db
 
     mc = MongoConnector(mongo_ip , 27017)
-    db = mc.createDatabase("cloud_db")
+    db = mc.createDatabase(db)
 
     model = (model_dict.keys())[0]
     terms = model_dict[model]
