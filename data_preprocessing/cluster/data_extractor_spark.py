@@ -10,8 +10,8 @@ def extract_data(model_dict):
         main method to extract data
     """
     conf = json.load(open("conf.json" , "r"))
-    mongo_ip = conf["db_ip_home"]
-    db = conf["db_name"]
+    mongo_ip = conf["db_host_ip"]
+    db_name = conf["db_name"]
 
     pages = [page.strip() for page in (open('pages.txt','r')).readlines()]
    
@@ -22,21 +22,21 @@ def extract_data(model_dict):
     global db
 
     mc = MongoConnector(mongo_ip , 27017)
-    db = mc.createDatabase(db)
+    db = mc.createDatabase(db_name)
 
     model = (model_dict.keys())[0]
     terms = model_dict[model]
 
-    count = 0
-
+    print "about to start extracting"
     for term in terms:
         for page in pages:
             data = fb_extractor.fetch(model, term, page)
             write_data(model, data)
-            count += len(data)
-            mc.close()
-    
-    return count
+
+    #Close the database connection
+    #mc.close()
+
+    return "success from " + model
 
 def write_data(model, data):
     """
@@ -50,8 +50,6 @@ def write_data(model, data):
     if(len(data) > 0):
         mc.insert_many(data, collection)
 
-
-    """json.dump(data, open(model+'_facebook.json', 'w'))"""
 
 if __name__ == '__main__':
     #extract_data()

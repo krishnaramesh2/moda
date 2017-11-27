@@ -54,13 +54,3 @@ if __name__ == '__main__':
     print "Reading from the database with id " + inserted
 
     pprint.pprint(mc.read(collection, inserted))
-
-
-
-
-
-
-
-
-
-   

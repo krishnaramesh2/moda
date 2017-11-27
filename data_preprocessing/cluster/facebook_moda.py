@@ -6,7 +6,7 @@ import os
 import log
 import string
 import datetime
-import pickle
+# import pickle
 
 # main class to read data
 # input:- path of config file, path to destination csv file, log directory path
@@ -23,8 +23,8 @@ class PageFeedReader:
         self.logger = log.Logger(all_conf['log_path'])
         self.total_comment_count = 0
         self.pages = self.get_page_list(self.conf['page_list_file'])
-        self.mc = MongoConnector('localhost' , 27017)
-        self.db = self.mc.createDatabase("cloud_db")
+        # self.mc = MongoConnector('localhost' , 27017)
+        # self.db = self.mc.createDatabase("cloud_db")
 
     def get_page_list(self, path):
         print "Considering pages listed in " + path
@@ -110,11 +110,13 @@ class PageFeedReader:
 
     # wrapper to fetch and filter the posts and then invoke method to fetch all comments from those posts
     def fetch(self, model, model_terms, page):
+        """
         if os.path.exists(self.conf['comment_ids_persisted']):
             self.comment_ids = pickle.load(open(self.conf['comment_ids_persisted']))
         else:
             self.comment_ids = set()
-
+        """
+        self.comment_ids = []
         self.page = page.strip()
         self.terms = model_terms
         print "\nScanning page:" + self.page
@@ -134,20 +136,21 @@ class PageFeedReader:
                     comment = {}
                     comment['id'] = item['id']
                     comment['comment'] = item['message']
+                    all_comments.append(comment)
 
                     #Check where the comment is present in the set
                     #if no, then add it to the set and also all_comments
                     #if yes, then skip it altogether
-                    if comment['id'] not in self.comment_ids:
-                        self.comment_ids.add(comment['id'])
-                        all_comments.append(comment)
+                    #if comment['id'] not in self.comment_ids:
+                        #self.comment_ids.append(comment['id'])
+                        #all_comments.append(comment)
                 # self.write_out(cms,post['id'])
         
         print "Fetched " + str(comment_count) + " comments from all the relevant posts of this page"
         self.logger.info("Fetched " + str(comment_count) + " comments from all the relevant posts of this page")
         self.total_comment_count += comment_count
 
-        pickle.dump(self.comment_ids, open(self.conf['comment_ids_persisted'],'w'))
+        # pickle.dump(self.comment_ids, open(self.conf['comment_ids_persisted'],'w'))
         return all_comments
     # extracts fields from the posts and write to csv file
     # if it is decided to fetch more fields from facebook than what it is now, then code in this method
