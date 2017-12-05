@@ -11,38 +11,12 @@ from statistics import mode
 from pymongo import *
 import string
 
-class VoteClassifier(ClassifierI):
-    def __init__(self, *classifiers):
-        self._classifiers = classifiers
-        
-
-    def classify(self, features):
-        votes = []
-        for c in self._classifiers:
-            v = c.classify(features)
-            votes.append(v)
-        return mode(votes)
-
-    def confidence(self, features):
-        votes = []
-        for c in self._classifiers:
-            v = c.classify(features)
-            votes.append(v)
-
-        choice_votes = votes.count(mode(votes))
-        conf = choice_votes / len(votes)
-        return conf
-
 class OpinionExtractor:
     def __init__(self):
         #self.data_source = json.load(open('all_data.json','r'))
-        classifier = pickle.load(open("originalnaivebayes5k.pickle", "rb"))
-        MNB_classifier = pickle.load(open("MNB_classifier5k.pickle", "rb"))
-        BernoulliNB_classifier = pickle.load(open("BernoulliNB_classifier5k.pickle", "rb"))
-        LogisticRegression_classifier = pickle.load(open("LogisticRegression_classifier5k.pickle", "rb"))
-        LinearSVC_classifier = pickle.load(open("LinearSVC_classifier5k.pickle", "rb"))
-
-        self.sentiment_classifier = VoteClassifier(classifier, LinearSVC_classifier, MNB_classifier, BernoulliNB_classifier, LogisticRegression_classifier)
+        classifier = pickle.load(open("originalnaivebayes5k.pickle", "rb")
+        
+        self.sentiment_classifier = classifier
 
         #self.sentiment_classifier = VoteClassifier(classifier)
 
